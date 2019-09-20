@@ -98,7 +98,7 @@ export function param2Obj(url) {
   if (!search) {
     return {}
   }
-  return JSON.parse(
+  return (
     '{"' +
       decodeURIComponent(search)
         .replace(/"/g, '\\"')
