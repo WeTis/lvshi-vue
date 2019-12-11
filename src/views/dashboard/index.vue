@@ -1,5 +1,7 @@
 <template>
   <div class="dashboard-container">
+    <el-button  type="primary" style="width:100%;margin-bottom:30px;" @click="dialogFormVisible = true">新增</el-button>
+
     <el-table
       v-loading="listLoading"
       :data="tableData"
@@ -29,6 +31,22 @@
         </template>
       </el-table-column>
     </el-table>
+
+
+    <el-dialog title="新增管理员" :visible.sync="dialogFormVisible">
+      <el-form :model="form">
+        <el-form-item label="登录名" >
+          <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" >
+          <el-input v-model="form.pass" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addUser">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -42,7 +60,12 @@ export default {
       pageNumber: 1,
       pageSize: 10,
       userName: null,
-      listLoading: true
+      listLoading: true,
+      dialogFormVisible: false,
+      form: {
+          name: '',
+          pass: ''
+        },
     }
   },
   created(){
@@ -62,6 +85,36 @@ export default {
           this.tableData = res.pageInfo.list;
           this.listLoading = false;
         })
+    },
+    addUser(){
+      if(this.form.name.length > 0 && this.form.pass.length > 0){
+        let data = {
+          type: 1,
+          userName: this.form.name,
+          password: this.form.pass,
+        };
+        this.$confirm('确认新增？',"提示",{
+          type: 'warning'
+        })
+        .then(_ => {
+
+          manageAdmin(data)
+          .then(res => {
+            this.$message({
+                message: '新增成功',
+                type: 'success'
+              });
+            this.dialogFormVisible = false;
+            this.getAdminList();
+          })
+        })
+        .catch(_ => {});
+      }else{
+        this.$message({
+              message: '请填入完整信息',
+              type: 'info'
+             });
+      }
     },
     delectFn(info){
 

@@ -26,7 +26,7 @@ module.exports = {
    */
   publicPath: '/lawyer',
   outputDir: 'dist',
-  assetsDir: '',
+  assetsDir: 'asset',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
   devServer: {
@@ -40,7 +40,7 @@ module.exports = {
       // change xxx-api/login => mock/login
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       '/api': {
-        target: `http://47.100.218.208:8080/lawyer/`,
+        target: `https://www.tongjiaonline.com:8443/lawyer/`,
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''
