@@ -68,7 +68,18 @@ export const constantRoutes = [
       }
     ]
   },
-
+  {
+    path: '/user',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'Form',
+        component: () => import('@/views/user/index'),
+        meta: { title: '用户列表', icon: 'form' }
+      }
+    ]
+  },
   {
     path: '/form',
     component: Layout,
@@ -91,6 +102,19 @@ export const constantRoutes = [
         name: 'Tree',
         component: () => import('@/views/tree/index'),
         meta: { title: '审核律师', icon: 'table' }
+      }
+    ]
+  },
+  {
+    path: '/article',
+    component: Layout,
+    redirect: '/article',
+    children: [
+      {
+        path: 'article',
+        name: 'article',
+        component: () => import('@/views/article/index'),
+        meta: { title: '文章列表', icon: 'table' }
       }
     ]
   },

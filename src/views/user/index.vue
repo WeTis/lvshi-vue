@@ -1,7 +1,5 @@
 <template>
   <div class="dashboard-container">
-    <el-button  type="primary" style="width:100%;margin-bottom:30px;" @click="dialogFormVisible = true">新增</el-button>
-
     <el-table
       v-loading="listLoading"
       :data="tableData"
@@ -14,25 +12,35 @@
           {{ scope.$index }}
         </template>
       </el-table-column>
-      <el-table-column label="账号"  align="center">
+      <el-table-column label="头像" width="60"  align="center">
         <template slot-scope="scope">
-          {{ scope.row.userName }}
+          <img :src="scope.row.headImage" style="width:px;height:50px;" alt="">
         </template>
       </el-table-column>
-      <el-table-column label="密码"  align="center">
+      <el-table-column label="微信昵称"  align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.password }}</span>
+          {{ scope.row.nickname }}
+        </template>
+      </el-table-column>
+      <el-table-column label="姓名"  align="center">
+        <template slot-scope="scope">
+          {{ scope.row.realName }}
+        </template>
+      </el-table-column>
+      <el-table-column label="电话"  align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.telephone }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" prop="created_at" label="操作">
         <template slot-scope="scope">
-          <el-button type="text" size="small" v-on:click="delectFn(scope.row)">删除</el-button>
-          <el-button type="text" size="small" v-on:click="updateFn(scope.row)">修改密码</el-button>
+          <el-button type="text" size="small" v-on:click="delectFn(scope.row)">切换为律师</el-button>
+          <!-- <el-button type="text" size="small" v-on:click="updateFn(scope.row)">修改密码</el-button> -->
         </template>
       </el-table-column>
     </el-table>
 
-    <div class="pages">
+ <div class="pages">
         <el-pagination
           background
           :page-size="pageSize"
@@ -41,26 +49,12 @@
           :total="size">
         </el-pagination>
     </div>
-
-    <el-dialog title="新增管理员" :visible.sync="dialogFormVisible">
-      <el-form :model="form">
-        <el-form-item label="登录名" >
-          <el-input v-model="form.name" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="密码" >
-          <el-input v-model="form.pass" autocomplete="off"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addUser">确 定</el-button>
-      </div>
-    </el-dialog>
+  
   </div>
 </template>
 
 <script>
-import { getAdminList, manageAdmin } from '@/api/user'
+import { getAdminList, manageAdmin,getLawyerList,setLaywer } from '@/api/user'
 export default {
   name: 'Dashboard',
    data(){
@@ -68,14 +62,18 @@ export default {
       tableData: [],
       pageNumber: 1,
       pageSize: 10,
-      userName: null,
+      userType: 1,
       listLoading: true,
-      dialogFormVisible: false,
       form: {
-          name: '',
-          pass: ''
-        },
-        size: 0
+        name: '',
+        region: '',
+        radio: "1",
+        lawyerPercentage: 0,
+        percentageOne: 0,
+      },
+      dialogFormVisible: false,
+      userInfo: '',
+      size: 0
     }
   },
   created(){
@@ -86,10 +84,10 @@ export default {
       let data = {
         pageNumber: this.pageNumber,
         pageSize: this.pageSize,
-        userName: this.userName
+        userType: this.userType
       }
 
-      getAdminList(data)
+      getLawyerList(data)
         .then(res => {
           console.log(res);
           this.size = res.pageInfo.total;
@@ -102,56 +100,55 @@ export default {
       this.pageNumber = e;
       this.getAdminList();
     },
-    addUser(){
-      if(this.form.name.length > 0 && this.form.pass.length > 0){
-        let data = {
-          type: 1,
-          userName: this.form.name,
-          password: this.form.pass,
-        };
-        this.$confirm('确认新增？',"提示",{
-          type: 'warning'
-        })
-        .then(_ => {
-
-          manageAdmin(data)
-          .then(res => {
-            this.$message({
-                message: '新增成功',
-                type: 'success'
-              });
-            this.dialogFormVisible = false;
-            this.getAdminList();
-          })
-        })
-        .catch(_ => {});
-      }else{
-        this.$message({
-              message: '请填入完整信息',
-              type: 'info'
-             });
-      }
+    setFn(info){
+      this.dialogFormVisible = true;
+      this.userInfo = info;
+      this.form.radio = info.percentageType == 0 ? '1' : info.percentageType.toString();
+      this.form.lawyerPercentage =info.lawyerPercentage ;
+      this.form.percentageOne = info.percentageOne;
     },
-    delectFn(info){
-
+    setInfo(){
       let data = {
-        type: 2,
-        userName: info.userName,
-        password: info.password,
-        id: info.id,
+        userType: 3,
+        id: this.userInfo.id,
+        percentageType: this.form.radio*1,
+        percentageOne: this.form.percentageOne,
+        lawyerPercentage: this.form.lawyerPercentage
       };
-      this.$confirm('确认删除？',"提示",{
+      this.$confirm('确认设置？',"提示",{
         type: 'warning'
       })
       .then(_ => {
 
-        manageAdmin(data)
+        setLaywer(data)
         .then(res => {
           this.$message({
-              message: '删除成功',
+              message: '认证通过成功',
               type: 'success'
              });
-          
+          this.dialogFormVisible= false;
+          this.getAdminList();
+        })
+      })
+      .catch(_ => {});
+    },
+    delectFn(info){
+
+      let data = {
+        userType:2,
+        id: info.id,
+      };
+      this.$confirm('确认切换用户为律师？，请谨慎操作',"提示",{
+        type: 'warning'
+      })
+      .then(_ => {
+
+        setLaywer(data)
+        .then(res => {
+          this.$message({
+              message: '切换成功',
+              type: 'success'
+             });
           this.getAdminList();
         })
       })

@@ -12,6 +12,11 @@
           {{ scope.$index }}
         </template>
       </el-table-column>
+      <el-table-column label="头像" width="60"  align="center">
+        <template slot-scope="scope">
+          <img :src="scope.row.headImage" style="width:px;height:50px;" alt="">
+        </template>
+      </el-table-column>
       <el-table-column label="微信昵称"  align="center">
         <template slot-scope="scope">
           {{ scope.row.nickname }}
@@ -62,14 +67,29 @@
           <span>{{ scope.row.goodAt }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="账户"  align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.lawyerBalance/100 }}元</span>
+        </template>
+      </el-table-column>
       <el-table-column align="center" prop="created_at" label="操作">
         <template slot-scope="scope">
           <el-button type="text" size="small" v-on:click="setFn(scope.row)">设置</el-button>
+          <el-button type="text" size="small" v-on:click="delectFn(scope.row)">降级为用户</el-button>
           <!-- <el-button type="text" size="small" v-on:click="updateFn(scope.row)">修改密码</el-button> -->
         </template>
       </el-table-column>
     </el-table>
-
+    <div class="pages">
+        <el-pagination
+          background
+          :page-size="pageSize"
+          layout="prev, pager, next"
+          @current-change="jumpPage"
+          :total="size">
+        </el-pagination>
+    </div>
+    
     <el-dialog title="设置抽成方式" :visible.sync="dialogFormVisible">
 
       <el-form :model="form">
@@ -119,7 +139,8 @@ export default {
         percentageOne: 0,
       },
       dialogFormVisible: false,
-      userInfo: ''
+      userInfo: '',
+      size: 0
     }
   },
   created(){
@@ -136,9 +157,15 @@ export default {
       getLawyerList(data)
         .then(res => {
           console.log(res);
+          this.size = res.pageInfo.total;
           this.tableData = res.pageInfo.list;
           this.listLoading = false;
         })
+    },
+    jumpPage(e){
+      console.log(e);
+      this.pageNumber = e;
+      this.getAdminList();
     },
     setFn(info){
       this.dialogFormVisible = true;
@@ -175,23 +202,20 @@ export default {
     delectFn(info){
 
       let data = {
-        type: 2,
-        userName: info.userName,
-        password: info.password,
+        userType:1,
         id: info.id,
       };
-      this.$confirm('确认删除？',"提示",{
+      this.$confirm('确认降级该律师为用户？，请谨慎操作',"提示",{
         type: 'warning'
       })
       .then(_ => {
 
-        manageAdmin(data)
+        setLaywer(data)
         .then(res => {
           this.$message({
-              message: '删除成功',
+              message: '切换成功',
               type: 'success'
              });
-          
           this.getAdminList();
         })
       })
@@ -246,5 +270,10 @@ export default {
     font-size: 30px;
     line-height: 46px;
   }
+}
+.pages{
+  width: 100%;
+  margin: 20px 0;
+  text-align: right;
 }
 </style>

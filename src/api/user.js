@@ -60,6 +60,41 @@ export function setLaywer(params){
   })
 }
 
+export function getArticle(params){
+  return request({
+    url: '/user/BannerList',
+    method: 'post',
+    params
+  })
+}
+
+export function updateArticle(params){
+  return request({
+    url: '/user/mangeBanner',
+    method: 'post',
+    params
+  })
+}
+
+export function addArticle(params){
+  return request({
+    url: '/user/toBanner',
+    method: 'post',
+    params
+  })
+}
+
+export function delArticle(params){
+  return request({
+    url: '/user/deleteBanner',
+    method: 'post',
+    params
+  })
+}
+
+
+
+
 
 
 

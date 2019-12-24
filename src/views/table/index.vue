@@ -60,6 +60,15 @@
         </template>
       </el-table-column>
     </el-table>
+    <div class="pages">
+        <el-pagination
+          background
+          :page-size="pageSize"
+          layout="prev, pager, next"
+          @current-change="jumpPage"
+          :total="size">
+        </el-pagination>
+    </div>
   </div>
 </template>
 
@@ -74,7 +83,8 @@ export default {
       pageSize: 10,
       userName: null,
       orderStatus: null,
-      listLoading: true
+      listLoading: true,
+      size: 0
     }
   },
   created(){
@@ -92,9 +102,15 @@ export default {
       getOrderList(data)
         .then(res => {
           console.log(res);
+          this.size = res.pageInfo.total;
           this.tableData = res.pageInfo.list;
           this.listLoading = false;
         })
+    },
+    jumpPage(e){
+      console.log(e);
+      this.pageNumber = e;
+      this.getAdminList();
     },
     delectFn(info){
 
@@ -170,5 +186,10 @@ export default {
     font-size: 30px;
     line-height: 46px;
   }
+}
+.pages{
+  width: 100%;
+  margin: 20px 0;
+  text-align: right;
 }
 </style>
