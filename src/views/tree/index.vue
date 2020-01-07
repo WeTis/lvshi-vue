@@ -57,10 +57,15 @@
               </template>
             </el-table-column>
             <el-table-column label="地址"  align="center">
-              <template slot-scope="scope">
-                <span>{{ scope.row.userAddress }}</span>
-              </template>
-            </el-table-column>
+            <template slot-scope="scope">
+              <span>{{ scope.row.userAddress ?  (scope.row.userAddress).split('$T$')[0] : ''}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="资格证书号"  align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.userAddress ? (scope.row.userAddress).split('$T$')[1] : ''}}</span>
+            </template>
+          </el-table-column>
             <el-table-column label="关键字"  align="center">
               <template slot-scope="scope">
                 <span>{{ scope.row.userLabel }}</span>

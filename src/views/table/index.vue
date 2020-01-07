@@ -14,7 +14,7 @@
               
             </div>
             <div class="serachItem">
-                <el-button type="primary">导出当前数据</el-button>
+                <el-button type="primary" @click="downLoad">导出当前数据</el-button>
             </div>
           </div>
           <div class="BtnSearch">
@@ -294,6 +294,56 @@ export default {
           this.tableData = res.pageInfo.list;
           this.listLoading = false;
         })
+    },
+    downLoad(){
+      // 
+      let xmlResquest = new XMLHttpRequest();
+      let data = "pageNumber=1&pageSize=99999&userName="+this.userName+"&lawyerName="+this.lawyerName+"&orderStatus="+this.orderStatus
+        +"&orderType="+this.orderType + "&adviceType="+this.adviceType+"&createStartDate="+this.createStartDate+"&createEndData="+this.createEndData;
+      
+      var x=new XMLHttpRequest();
+          x.open("GET", "/api/user/exportOrderExcel?"+data, true);
+          x.responseType = 'blob';
+          x.onload=function(e){
+              var url = window.URL.createObjectURL(x.response);
+              var a = document.createElement('a');
+              a.href = url;
+              a.download = '22.xls';
+              a.click()
+          }
+          x.send();
+      //  发起请求
+      // xmlResquest.open("GET", "/api/user/exportOrderExcel", true);
+      // xmlResquest.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+      // 设置请求头类型
+      // xmlResquest.setRequestHeader("Content-type", "application/json");
+      // xmlResquest.setRequestHeader("pageNumber", 1);
+      // xmlResquest.setRequestHeader("pageSize", 999999);
+      // xmlResquest.setRequestHeader("userName", this.userName);
+      // xmlResquest.setRequestHeader("lawyerName", this.lawyerName);
+      // xmlResquest.setRequestHeader("orderStatus", this.orderStatus);
+      // xmlResquest.setRequestHeader("orderType", this.orderType);
+      // xmlResquest.setRequestHeader("adviceType", this.adviceType);
+      // xmlResquest.setRequestHeader("createStartDate", this.createStartDate);
+      // xmlResquest.setRequestHeader("createEndData", this.createEndData);
+      //  设置请求token
+
+      // xmlResquest.responseType = "blob";
+      // //  返回
+      // xmlResquest.onload = function(oEvent) {
+      // let content = xmlResquest.response;
+      // // 组装a标签
+      // let elink = document.createElement("a");
+      // // 设置下载文件名
+      // elink.download = "订单.xls";
+      // elink.style.display = "none";
+      // let blob = new Blob([content]);
+      // elink.href = URL.createObjectURL(blob);
+      // document.body.appendChild(elink);
+      // elink.click();
+      // document.body.removeChild(elink);
+      // };
+      // xmlResquest.send();
     },
     searchFn(){
       this.orderStatus = null;

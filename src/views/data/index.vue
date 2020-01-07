@@ -1,5 +1,60 @@
 <template>
   <div class="data">
+		<div class="title">总数据</div>
+    <div class="topCard">
+        <div class="order">
+          <div class="left">
+              <i class="el-icon-s-order"></i>
+          </div>
+          <div class="right">
+            <div class="nums">
+              <span class="num">{{Order}}</span>
+              <span class="desc">单</span>
+            </div>
+            <div class="text">订单数</div>
+          </div>
+        </div>
+
+        <div class="addUser">
+          <div class="left">
+              <i class="el-icon-user-solid"></i>
+          </div>
+          <div class="right">
+            <div class="nums">
+              <span class="num">{{User}}</span>
+              <span class="desc">人</span>
+            </div>
+            <div class="text">用户</div>
+          </div>
+        </div>
+
+
+        <div class="addLawyer">
+          <div class="left">
+              <i class="el-icon-s-custom"></i>
+          </div>
+          <div class="right">
+            <div class="nums">
+              <span class="num">{{Lawyer}}</span>
+              <span class="desc">人</span>
+            </div>
+            <div class="text">律师</div>
+          </div>
+        </div>
+
+        <div class="numCount">
+          <div class="left">
+              <i class="el-icon-money"></i>
+          </div>
+          <div class="right">
+            <div class="nums">
+              <span class="num">{{Money}}</span>
+              <span class="desc">元</span>
+            </div>
+            <div class="text">成交额</div>
+          </div>
+        </div>
+    </div>
 	<div class="title">今日数据</div>
     <div class="topCard">
         <div class="order">
@@ -121,6 +176,10 @@ export default {
 			nowTime: null,
 			weekStartTime: null,
 			weekEndTime: null,
+			Lawyer: null,
+			User: null,
+			Order: null,
+			Money: null,
 			nowLawyer: null,
 			nowUser: null,
 			nowOrder: null,
@@ -134,11 +193,49 @@ export default {
 		}
 	},
 	created() {
+		this.getDataALL();
 		this.setTime();
 		this.getData();
 		this.getDataWeek();
 	},
 	methods: {
+		getDataALL() {
+			let param = {
+				pageNumber: 1,
+        pageSize: 9999999,
+        userType: 3
+			};
+			// 律师
+			getLawyerList(param)
+			.then(res => {
+				this.Lawyer=  res.pageInfo.total;
+			})
+			let param2 = {
+				pageNumber: 1,
+        pageSize: 9999999,
+        userType: 1
+			}
+			// 用户
+			getLawyerList(param2)
+			.then(res => {
+				this.User =  res.pageInfo.total;
+			})
+			let data = {
+        pageNumber: 1,
+        pageSize:999999
+			}
+			// 订单 and 成交额
+      getOrderList(data)
+        .then(res => {
+					this.Order =  res.pageInfo.total;
+					let data = res.pageInfo.list;
+					let num = 0;
+					for(let i = 0; i < data.length; i++){
+						num = num + data[i].orderMoney;
+					}
+					this.Money = num/100;
+        })
+		},
 		getData() {
 			let param = {
 				pageNumber: 1,
@@ -280,6 +377,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.data{
+	padding-bottom: 20px;
+}
 .title{
 	padding-left: 20px;
 	height: 80px;
@@ -300,13 +400,19 @@ export default {
 }
 .topCard >div{
   flex: 1;
+	min-width: 222px;
+	// max-width: 25%;
   height: 150px;
   margin-right: 20px;
+	margin-bottom: 20px;
+	padding: 0 10px;
+	box-sizing: border-box;
   color: #fff;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   align-content: center;
+	    align-items: center;
   border-radius: 5px;
   box-shadow: 0 0 8px 4px #d4cdcd;
 }
@@ -331,10 +437,10 @@ export default {
     align-content: center;
     .nums{
       width: 100%;
-      font-size: 26px;
+      font-size: 24px;
       font-weight: bold;
       .desc{
-        font-size: 18px;
+        font-size: 16px;
         font-weight: bold;
       }
     }
@@ -499,10 +605,39 @@ export default {
 	}
 }
 @media screen and (max-width:1400px){
+	.topCard >div{
+		height: 120px;
+	}
+	.topCard >div .left{
+		flex: 1;
+		text-align: center;
+		i{
+			font-size: 60px;
+			height: 80px;
+			width: 80px;
+			line-height: 80px;
+		}
+	}
 	.twoBox .left{
 		.card{
 			width: 100%;
+			height: 160px;
 			flex: auto;
+			.content{
+				margin-top: 20px;
+				i{
+					font-size: 60px;
+				}
+				.rightNum{
+					font-size: 50px;
+					font-weight: bold;
+					height: 80px;
+					line-height: 80px;
+					position: relative;
+					top: -10px;
+					left: -30px;
+				}
+		}
 		}
 	}
     .twoBox .right{

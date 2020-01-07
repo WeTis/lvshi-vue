@@ -58,7 +58,12 @@
           </el-table-column>
           <el-table-column label="地址"  align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.userAddress }}</span>
+              <span>{{ (scope.row.userAddress).split('$T$')[0] }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="资格证书号"  align="center">
+            <template slot-scope="scope">
+              <span>{{ (scope.row.userAddress).split('$T$')[1] }}</span>
             </template>
           </el-table-column>
           <el-table-column label="关键字"  align="center">
@@ -86,7 +91,7 @@
               <span>{{ scope.row.lawyerBalance/100 }}元</span>
             </template>
           </el-table-column>
-          <el-table-column align="center" prop="created_at" label="操作">
+          <el-table-column align="center" prop="created_at" min-width="150" label="操作">
             <template slot-scope="scope">
               <el-button type="text" size="small" v-on:click="setFn(scope.row)">设置</el-button>
               <el-button type="text" size="small" v-on:click="delectFn(scope.row)">降级为用户</el-button>
@@ -305,6 +310,10 @@ export default {
 }
 .el-container .el-main{
   padding: 0 20px;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: auto;
 }
 // .dashboard {
 //   &-container {
@@ -352,6 +361,15 @@ export default {
     line-height: 32px;
     width: 20px;
     color: #303133;
+}
+
+.el-table{
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 20px;
+  right: 20px;
+  width: auto;
 }
 .pages{
   width: 100%;

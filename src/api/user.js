@@ -92,6 +92,13 @@ export function delArticle(params){
   })
 }
 
+export function downLoad(data){
+  return request({
+    url: '/user/exportOrderExcel',
+    method: 'get',
+    data
+  })
+}
 
 
 
