@@ -231,7 +231,9 @@ export default {
 					let data = res.pageInfo.list;
 					let num = 0;
 					for(let i = 0; i < data.length; i++){
-						num = num + data[i].orderMoney;
+						if(data[i].orderStatus != 0){
+							num = num + data[i].orderMoney;
+						}
 					}
 					this.Money = num/100;
         })
@@ -274,7 +276,10 @@ export default {
 					let data = res.pageInfo.list;
 					let num = 0;
 					for(let i = 0; i < data.length; i++){
-						num = num + data[i].orderMoney;
+						if(data[i].orderStatus != 0){
+							num = num + data[i].orderMoney;
+						}
+						
 					}
 					this.nowMoney = num/100;
         })
@@ -317,7 +322,9 @@ export default {
 					let data = res.pageInfo.list;
 					let num = 0;
 					for(let i = 0; i < data.length; i++){
-						num = num + data[i].orderMoney;
+						if(data[i].orderStatus != 0){
+							num = num + data[i].orderMoney;
+						}
 					}
 					this.weekMoney = num/100;
 				})
