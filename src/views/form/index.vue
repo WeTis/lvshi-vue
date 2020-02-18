@@ -58,12 +58,12 @@
           </el-table-column>
           <el-table-column label="地址"  align="center">
             <template slot-scope="scope">
-              <span>{{ (scope.row.userAddress).split('$T$')[0] }}</span>
+              <span>{{ scope.row.userAddress ? (scope.row.userAddress).split('$T$')[0] : '' }}</span>
             </template>
           </el-table-column>
           <el-table-column label="资格证书号"  align="center">
             <template slot-scope="scope">
-              <span>{{ (scope.row.userAddress).split('$T$')[1] }}</span>
+              <span>{{ scope.row.userAddress ? (scope.row.userAddress).split('$T$')[1] : ''}}</span>
             </template>
           </el-table-column>
           <el-table-column label="关键字"  align="center">
@@ -88,12 +88,13 @@
           </el-table-column>
           <el-table-column label="账户"  align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.lawyerBalance/100 }}元</span>
+              <span>{{ Math.floor(scope.row.lawyerBalance/100*100) /100 }}元</span>
             </template>
           </el-table-column>
           <el-table-column align="center" prop="created_at" min-width="150" label="操作">
             <template slot-scope="scope">
               <el-button type="text" size="small" v-on:click="setFn(scope.row)">设置</el-button>
+              <el-button type="text" size="small" v-on:click="changeFn(scope.row)">修改</el-button>
               <el-button type="text" size="small" v-on:click="delectFn(scope.row)">降级为用户</el-button>
               <!-- <el-button type="text" size="small" v-on:click="updateFn(scope.row)">修改密码</el-button> -->
             </template>
@@ -141,12 +142,63 @@
       </div>
     </el-dialog>
 
-  
+      <!-- 修改律师信息 -->
+    <el-dialog title="修改用户信息" :visible.sync="dialogFormVisibleInfo">
+
+      
+      <el-form ref="infoFrom" :model="infoFrom" label-width="80px">
+        <el-form-item label="姓名">
+          <el-input v-model="infoFrom.realName"></el-input>
+        </el-form-item>
+        <el-form-item label="职业律所">
+          <el-input v-model="infoFrom.userAddressLS"></el-input>
+        </el-form-item>
+        <el-form-item label="执业证号">
+          <el-input v-model="infoFrom.userAddressNUM"></el-input>
+        </el-form-item>
+        <el-form-item label="电话">
+          <el-input v-model="infoFrom.telephone"></el-input>
+        </el-form-item>
+        <el-form-item label="电话价格">
+          <el-input v-model="infoFrom.lawyerPrice"></el-input>
+        </el-form-item>
+        <el-form-item label="图文价格">
+          <el-input v-model="infoFrom.photoPrice"></el-input>
+        </el-form-item>
+        <el-form-item label="主要类目">
+          <el-select v-model="infoFrom.type" placeholder="请选择主要类目">
+            <el-option label="婚姻家事" value="婚姻家事"></el-option>
+            <el-option label="劳动工伤" value="劳动工伤"></el-option>
+            <el-option label="交通事故" value="交通事故"></el-option>
+            <el-option label="合同纠纷" value="合同纠纷"></el-option>
+            <el-option label="民间借贷" value="民间借贷"></el-option>
+            <el-option label="知识产权" value="知识产权"></el-option>
+            <el-option label="拆迁安置" value="拆迁安置"></el-option>
+            <el-option label="税务规划" value="税务规划"></el-option>
+            <el-option label="公司业务" value="公司业务"></el-option>
+            <el-option label="刑事辩护" value="刑事辩护"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="简介">
+          <el-input type="textarea" v-model="infoFrom.selfData"></el-input>
+        </el-form-item>
+        <el-form-item label="擅长">
+          <el-input type="textarea" v-model="infoFrom.goodAt"></el-input>
+        </el-form-item>
+        <el-form-item label="执业经历">
+          <el-input type="textarea" v-model="infoFrom.workExperience"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisibleInfo = false">取 消</el-button>
+        <el-button type="primary" @click="changeInfoFn">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getAdminList, manageAdmin,getLawyerList,setLaywer } from '@/api/user'
+import { getAdminList,changeInfoApi, manageAdmin,getLawyerList,setLaywer } from '@/api/user'
 export default {
   name: 'Dashboard',
    data(){
@@ -166,7 +218,21 @@ export default {
       },
       dialogFormVisible: false,
       userInfo: '',
-      size: 0
+      size: 0,
+      dialogFormVisibleInfo: false,
+      infoFrom: {
+        realName:"",
+        userAddressLS:"",
+        userAddressNUM:"",
+        telephone:"",
+        lawyerPrice:"",
+        photoPrice:"",
+        selfData:"",
+        goodAt:"",
+        workExperience:"",
+        type: "",
+        id: ''
+      }
     }
   },
   created(){
@@ -202,6 +268,117 @@ export default {
       this.pageNumber = e;
       this.getAdminList();
     },
+    changeFn(info){
+       this.infoFrom = {
+          realName: info.realName,
+          userAddressLS: info.userAddress ?  (info.userAddress).split('$T$')[0] : '',
+          userAddressNUM: info.userAddress ? (info.userAddress).split('$T$')[1] : '',
+          telephone: info.telephone,
+          lawyerPrice: info.lawyerPrice,
+          photoPrice: info.photoPrice,
+          selfData: info.selfData,
+          goodAt: info.goodAt,
+          workExperience: info.workExperience,
+          type: info.userLabel,
+          id: info.id
+      }
+      this.dialogFormVisibleInfo = true;
+      console.log(this.infoFrom);
+    },
+    changeInfoFn(){
+
+      if(this.infoFrom.lawyerPrice <= 0 || this.infoFrom.photoPrice <= 0){
+        this.$message({
+              message: '价格不能小于0',
+              type: 'info'
+             });
+        return false;
+      }
+      if(this.infoFrom.selfData.length <= 0){
+        this.$message({
+              message: '简介不能为空',
+              type: 'info'
+             });
+        return false;
+      }
+      if(this.infoFrom.goodAt.length <= 0){
+        this.$message({
+              message: '擅长不能为空',
+              type: 'info'
+             });
+        return false;
+      }
+      if(this.infoFrom.workExperience.length <= 0){
+        this.$message({
+              message: '执业经历不能为空',
+              type: 'info'
+             });
+        return false;
+      }
+      if(this.infoFrom.type.length <= 0){
+        this.$message({
+              message: '主要类目不能为空',
+              type: 'info'
+             });
+        return false;
+      }
+      if(this.infoFrom.realName.length <= 0){
+        this.$message({
+              message: '姓名不能为空',
+              type: 'info'
+             });
+        return false;
+      }
+      if(this.infoFrom.userAddressLS.length <= 0){
+        this.$message({
+              message: '执业律所不能为空',
+              type: 'info'
+             });
+        return false;
+      }
+      if(this.infoFrom.userAddressNUM.length <= 0){
+        this.$message({
+              message: '执业证号不能为空',
+              type: 'info'
+             });
+        return false;
+      }
+      if(this.infoFrom.telephone.length <= 0){
+        this.$message({
+              message: '电话不能为空',
+              type: 'info'
+             });
+        return false;
+      }
+      let data = {
+         id: this.infoFrom.id,
+         realName: this.infoFrom.realName,
+         telephone: this.infoFrom.telephone,
+         lawyerPrice: this.infoFrom.lawyerPrice,
+         photoPrice: this.infoFrom.photoPrice,
+         selfData: this.infoFrom.selfData,
+         goodAt: this.infoFrom.goodAt,
+         workExperience: this.infoFrom.workExperience,
+         userLabel: this.infoFrom.type,
+         userAddress: this.infoFrom.userAddressLS + '$T$'+ this.infoFrom.userAddressNUM,
+      };
+      this.$confirm('确认修改此律师信息？',"提示",{
+        type: 'warning'
+      })
+      .then(_ => {
+
+        changeInfoApi(data)
+        .then(res => {
+          this.$message({
+              message: '修改成功',
+              type: 'success'
+             });
+          this.dialogFormVisibleInfo= false;
+          this.getAdminList();
+        })
+      })
+      .catch(_ => {});
+    }, 
     setFn(info){
       this.dialogFormVisible = true;
       this.userInfo = info;

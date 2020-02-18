@@ -126,3 +126,11 @@ export function logout() {
     method: 'post'
   })
 }
+
+export function changeInfoApi(params) {
+  return request({
+    url: '/user/updateLawyer',
+    method: 'post',
+    params
+  })
+}
