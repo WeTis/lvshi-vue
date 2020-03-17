@@ -93,6 +93,18 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/lange',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        name: 'lange',
+        component: () => import('@/views/lange/index'),
+        meta: { title: '语言管理', icon: 'form' }
+      }
+    ]
+  },
+  {
     path: '/form',
     component: Layout,
     children: [

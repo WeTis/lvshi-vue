@@ -38,7 +38,7 @@
           </el-table-column>
           <el-table-column label="姓名"  align="center">
             <template slot-scope="scope">
-              {{ scope.row.realName }}
+              {{ (scope.row.realName) ? (scope.row.realName).split("ZH^")[0] : '' }}
             </template>
           </el-table-column>
           <el-table-column label="图文价格"  align="center">
@@ -58,12 +58,12 @@
           </el-table-column>
           <el-table-column label="地址"  align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.userAddress ? (scope.row.userAddress).split('$T$')[0] : '' }}</span>
+              <span>{{ scope.row.userAddress ? ((scope.row.userAddress).split("ZH^")[0] ? ((scope.row.userAddress).split("ZH^")[0]).split('$T$')[0] : "") : '' }}</span>
             </template>
           </el-table-column>
           <el-table-column label="资格证书号"  align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.userAddress ? (scope.row.userAddress).split('$T$')[1] : ''}}</span>
+              <span>{{  scope.row.userAddress ? ((scope.row.userAddress).split("ZH^")[0] ? ((scope.row.userAddress).split("ZH^")[0]).split('$T$')[1] : "") : '' }}</span>
             </template>
           </el-table-column>
           <el-table-column label="关键字"  align="center">
@@ -73,17 +73,17 @@
           </el-table-column>
           <el-table-column label="执业经历"  align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.workExperience }}</span>
+              <span>{{ (scope.row.workExperience) ? (scope.row.workExperience).split("ZH^")[0] : '' }}</span>
             </template>
           </el-table-column>
           <el-table-column label="简介" show-overflow-tooltip  align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.selfData }}</span>
+              <span>{{ (scope.row.selfData) ? (scope.row.selfData).split("ZH^")[0] : '' }}</span>
             </template>
           </el-table-column>
           <el-table-column label="擅长"  align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.goodAt }}</span>
+              <span>{{ (scope.row.goodAt) ? (scope.row.goodAt).split("ZH^")[0] : '' }}</span>
             </template>
           </el-table-column>
           <el-table-column label="账户"  align="center">
@@ -143,10 +143,10 @@
     </el-dialog>
 
       <!-- 修改律师信息 -->
-    <el-dialog title="修改用户信息" :visible.sync="dialogFormVisibleInfo">
+    <el-dialog title="修改用户信息" fullscreen :visible.sync="dialogFormVisibleInfo">
 
-      
-      <el-form ref="infoFrom" :model="infoFrom" label-width="80px">
+      <div class="mainN">
+          <el-form ref="infoFrom" :model="infoFrom" label-width="80px" :inline="true">
         <el-form-item label="姓名">
           <el-input v-model="infoFrom.realName"></el-input>
         </el-form-item>
@@ -179,6 +179,7 @@
             <el-option label="刑事辩护" value="刑事辩护"></el-option>
           </el-select>
         </el-form-item>
+        
         <el-form-item label="简介">
           <el-input type="textarea" v-model="infoFrom.selfData"></el-input>
         </el-form-item>
@@ -189,6 +190,35 @@
           <el-input type="textarea" v-model="infoFrom.workExperience"></el-input>
         </el-form-item>
       </el-form>
+      </div>
+      
+      <div class="setLange">
+        <div class="name">设置语言</div>
+          <el-checkbox-group v-model="checkboxGroup1" @change="changeCheck">
+            <el-checkbox-button v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox-button>
+          </el-checkbox-group>
+      </div>
+      <div class="otherLange" v-for="(item,index) in langeALL">
+        <div class="name">{{item.langeName}}信息</div>
+        <el-form ref="infoFrom" :model="infoFrom" label-width="80px" :inline="true">
+          <el-form-item label="姓名">
+            <el-input v-model="item.realName"></el-input>
+          </el-form-item>
+          <el-form-item label="职业律所">
+            <el-input v-model="item.userAddressLS"></el-input>
+          </el-form-item>
+          <el-form-item label="简介">
+            <el-input type="textarea" v-model="item.selfData"></el-input>
+          </el-form-item>
+          <el-form-item label="擅长">
+            <el-input type="textarea" v-model="item.goodAt"></el-input>
+          </el-form-item>
+          <el-form-item label="执业经历">
+            <el-input type="textarea" v-model="item.workExperience"></el-input>
+          </el-form-item>
+        </el-form>
+      </div>
+
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisibleInfo = false">取 消</el-button>
         <el-button type="primary" @click="changeInfoFn">确 定</el-button>
@@ -198,7 +228,7 @@
 </template>
 
 <script>
-import { getAdminList,changeInfoApi, manageAdmin,getLawyerList,setLaywer } from '@/api/user'
+import { getAdminList,changeInfoApi, manageAdmin,getLawyerList,setLaywer, getLanguageList} from '@/api/user'
 export default {
   name: 'Dashboard',
    data(){
@@ -209,6 +239,9 @@ export default {
       userType: 3,
       realNmae: null,
       listLoading: true,
+      citiesALL: [],
+      cities: [],
+      checkboxGroup1: [],
       form: {
         name: '',
         region: '',
@@ -231,14 +264,47 @@ export default {
         goodAt:"",
         workExperience:"",
         type: "",
-        id: ''
-      }
+        id: '',
+        
+      },
+      langeItem: {
+        realName:"",
+        userAddressLS:"",
+        userAddressNUM:"",
+        selfData:"",
+        goodAt:"",
+        workExperience:"",
+      },
+      langeALL: [],
+      userInfo: {},
     }
   },
   created(){
-    this.getAdminList()
+    this.getAdminList();
+    this.getLanguageList();
   },
   methods: {
+    // 根据语言的数量设置
+    getLanguageList() {
+			const param = {
+				pageSize: 999,
+				pageNumber: 1
+			}
+			getLanguageList(param)
+				.then((res) => {
+					console.log(res)
+          let cities = res.list;
+          this.citiesALL = res.list;
+          let arr = [];
+          for(let i =0; i < cities.length; i++){
+            arr.push(cities[i].language)
+          }
+          this.cities = arr;
+				})
+    },
+    setLangeItem(){
+      
+    },
     getAdminList(){
       let data = {
         pageNumber: this.pageNumber,
@@ -264,24 +330,130 @@ export default {
       this.getAdminList();
     },
     jumpPage(e){
-      console.log(e);
       this.pageNumber = e;
       this.getAdminList();
     },
+    getLangeItem(name){
+      let citiesALL = this.citiesALL;
+
+      let item = '';
+      for(let i = 0; i < citiesALL.length; i++){
+        if(name == citiesALL[i].language){
+          item = citiesALL[i];
+        }
+      }
+      return item;
+    },
+    changeCheck(e){
+      console.log(e)
+      let langeALL = this.langeALL;
+      let arr =[];
+      for(let i =0; i < e.length; i++){
+        let m = e[i];
+        let l = 2;
+        for(let  y = 0; y < langeALL.length; y++){
+          console.log(langeALL[y].langeName,m)
+          if(langeALL[y].langeName == m){
+            console.log("存在1")
+            arr.push(langeALL[y]);
+            l = 1;
+          }
+        }
+        if(l == 2){
+          // 判断当前新增的是否已经存在
+          let langeIds = this.userInfo.languageId ? (this.userInfo.languageId).split(',') : [];
+          console.log(langeIds)
+          console.log(this.getLangeItem(m).id,m)
+          let info = this.userInfo;
+          let is = 1;
+          let data = {
+            
+          };
+          for(let v = 0;  v < langeIds.length; v++){
+            if(this.getLangeItem(m).id == langeIds[v]){
+              console.log("存在2")
+              let deg =  '$'+this.getLangeItem(m).id+'^';
+              data = {
+                realName: (info.realName) ? (info.realName).split(deg)[1] : '',
+                userAddressLS: info.userAddress ?  ((info.userAddress).split(deg)[1] ? ((info.userAddress).split(deg)[1]).split('$T$')[0]:""): '',
+                userAddressNUM: info.userAddress ? ((info.userAddress).split(deg)[1] ? ((info.userAddress).split(deg)[1]).split('$T$')[1]:""): '',
+                selfData: (info.selfData) ? (info.selfData).split(deg)[1] : '',
+                goodAt: (info.goodAt) ? (info.goodAt).split(deg)[1] : '',
+                workExperience: (info.workExperience) ? (info.workExperience).split(deg)[1] : '',
+                id: this.getLangeItem(m).id,
+                langeName: m
+              }
+              is = 2;
+              break;
+            }
+          }
+          if(is == 1){
+            data = {
+              realName: '',
+              userAddressLS: '',
+              userAddressNUM: '',
+              selfData: '',
+              goodAt: '',
+              workExperience: '',
+              id: this.getLangeItem(m).id,
+              langeName: m
+            }
+            console.log("存在3")
+          }
+          
+          arr.push(data)
+        }
+      }
+      this.langeALL = arr;
+    },
     changeFn(info){
+      // 拆分中文
+      // ,
+       this.userInfo = info;
        this.infoFrom = {
-          realName: info.realName,
-          userAddressLS: info.userAddress ?  (info.userAddress).split('$T$')[0] : '',
-          userAddressNUM: info.userAddress ? (info.userAddress).split('$T$')[1] : '',
+          realName: (info.realName) ? (info.realName).split("ZH^")[0] : '',
+          userAddressLS: info.userAddress ?  ((info.userAddress).split("ZH^")[0]).split('$T$')[0] : '',
+          userAddressNUM: info.userAddress ? ((info.userAddress).split("ZH^")[0]).split('$T$')[1] : '',
           telephone: info.telephone,
           lawyerPrice: info.lawyerPrice,
           photoPrice: info.photoPrice,
-          selfData: info.selfData,
-          goodAt: info.goodAt,
-          workExperience: info.workExperience,
+          selfData: info.selfData ? (info.selfData).split("ZH^")[0] : '',
+          goodAt: info.goodAt ? (info.goodAt).split("ZH^")[0] : '',
+          workExperience: info.workExperience ? (info.workExperience).split("ZH^")[0] : '',
           type: info.userLabel,
           id: info.id
       }
+      // 判断当前用户都有哪些语言
+      let cities = this.citiesALL;
+      let arr = [];
+      let arrId = info.languageId ? (info.languageId).split(',') : [];
+      
+      for(let i = 0; i < cities.length; i++){
+        for(let y = 0; y < arrId.length; y++){
+          if(cities[i].id == arrId[y]){
+            arr.push(cities[i].language);
+          }
+        }
+      }
+      this.checkboxGroup1 = arr;
+      // 拆分信息 $id^
+      // langeALL
+      let langeALL = [];
+      for(let m = 0; m < arr.length; m++){
+        let deg = '$'+this.getLangeItem(arr[m]).id+'^';
+        let data = {
+          realName: info.realName ? (info.realName).split(deg)[1] : '',
+          userAddressLS: info.userAddress ?  ((info.userAddress).split(deg)[1] ? ((info.userAddress).split(deg)[1]).split('$T$')[0]:""): '',
+          userAddressNUM: info.userAddress ? ((info.userAddress).split(deg)[1] ? ((info.userAddress).split(deg)[1]).split('$T$')[1]:""): '',
+          selfData: (info.selfData) ? (info.selfData).split(deg)[1] : '',
+          goodAt: info.goodAt ? (info.goodAt).split(deg)[1] : '',
+          workExperience: info.workExperience ? (info.workExperience).split(deg)[1] : '',
+          id: this.getLangeItem(arr[m]).id,
+          langeName: arr[m]
+        }
+        langeALL.push(data);
+      }
+      this.langeALL = langeALL;
       this.dialogFormVisibleInfo = true;
       console.log(this.infoFrom);
     },
@@ -350,18 +522,65 @@ export default {
              });
         return false;
       }
+
+      // 判断其他语言不能为空
+      let langeALL = this.langeALL;
+      // console.log(langeALL);
+      // let m = 1;
+      // for(let i = 0; i < langeALL.length; i++){
+      //   let arr = langeALL[i];
+      //   if(this.infoFrom.realName.length <= 0){
+      //     this.$message({
+      //           message: '姓名不能为空',
+      //           type: 'info'
+      //         });
+      //     return false;
+      //   }
+      //   if(this.infoFrom.userAddressLS.length <= 0){
+      //     this.$message({
+      //           message: '执业律所不能为空',
+      //           type: 'info'
+      //         });
+      //     return false;
+      //   }
+      // }
+      // if(m == 2){
+      //   this.$message({
+      //         message: '新增语言信息不能为空',
+      //         type: 'info'
+      //        });
+      //    return false;
+      // }
+      let languageId = [];
+      let checkboxGroup1 = this.checkboxGroup1;
+      for(let i = 0; i < checkboxGroup1.length; i++){
+        languageId.push(this.getLangeItem(checkboxGroup1[i]).id)
+      }
       let data = {
          id: this.infoFrom.id,
-         realName: this.infoFrom.realName,
+         realName: this.infoFrom.realName+"ZH^",
          telephone: this.infoFrom.telephone,
          lawyerPrice: this.infoFrom.lawyerPrice,
          photoPrice: this.infoFrom.photoPrice,
-         selfData: this.infoFrom.selfData,
-         goodAt: this.infoFrom.goodAt,
-         workExperience: this.infoFrom.workExperience,
+         selfData: this.infoFrom.selfData+"ZH^",
+         goodAt: this.infoFrom.goodAt+"ZH^",
+         workExperience: this.infoFrom.workExperience+"ZH^",
          userLabel: this.infoFrom.type,
-         userAddress: this.infoFrom.userAddressLS + '$T$'+ this.infoFrom.userAddressNUM,
+         userAddress: this.infoFrom.userAddressLS + '$T$'+ this.infoFrom.userAddressNUM+"ZH^",
+         languageId:  languageId.join(',')
+        //  languageId: '1'
       };
+      for(let i = 0; i < langeALL.length; i++){
+        let deg = '$'+this.getLangeItem(checkboxGroup1[i]).id+'^';
+        let info = langeALL[i];
+          data.realName = data.realName+deg+(info.realName)+deg,
+          data.userAddress = data.userAddress +deg + info.userAddressLS+'$T$'+ info.userAddressNUM+ deg,
+          data.selfData = data.selfData + deg + (info.selfData) + deg,
+          data.goodAt = data.goodAt + deg + (info.goodAt) + deg,
+          data.workExperience = data.workExperience + deg + (info.workExperience) + deg
+      }
+      // console.log(data);
+      // return false;
       this.$confirm('确认修改此律师信息？',"提示",{
         type: 'warning'
       })
@@ -552,5 +771,39 @@ export default {
   width: 100%;
   margin-top: 20px;
   text-align: right;
+}
+
+
+
+.mainN{
+  width: 100%;
+  padding-top: 20px;
+  box-shadow: 0 0 16px 6px #ccc;
+}
+.otherLange{
+  width: 100%;
+  margin-top: 20px;
+  padding-top: 20px;
+  box-shadow: 0 0 16px 6px #ccc;
+}
+.otherLange .name{
+  height: 40px;
+  line-height: 40px;
+  font-weight: bold;
+  padding-left: 40px;
+}
+.setLange{
+  width: 100%;
+  margin-top: 20px;
+  padding: 20px 0;
+  box-shadow: 0 0 16px 6px #ccc;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 40px;
+}
+.setLange .name{
+  font-weight: bold;
+  padding-right: 20px;
 }
 </style>

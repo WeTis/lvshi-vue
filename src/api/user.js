@@ -134,3 +134,20 @@ export function changeInfoApi(params) {
     params
   })
 }
+
+export function getLanguageList(params) {
+  return request({
+    url: 'user/getLanguageList',
+    method: 'post',
+    params
+  })
+}
+
+export function setLanguage(params) {
+  return request({
+    url: 'user/language',
+    method: 'post',
+    params
+  })
+}
+
