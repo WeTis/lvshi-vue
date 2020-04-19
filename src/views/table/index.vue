@@ -87,7 +87,7 @@
             </el-table-column>
             <el-table-column label="用户"  align="center">
               <template slot-scope="scope">
-                {{ scope.row.adviceUsername }}
+                {{ (scope.row.adviceUsername).split('ZH^')[0] }}
               </template>
             </el-table-column>
 
@@ -99,7 +99,7 @@
 
             <el-table-column label="律师"  align="center">
               <template slot-scope="scope">
-                {{ scope.row.lawyerUsername }}
+                {{ (scope.row.lawyerUsername).split('ZH^')[0] }}
               </template>
             </el-table-column>
             <el-table-column label="律师电话"  align="center">
@@ -125,6 +125,7 @@
                 {{ scope.row.orderStatus == 2 ? '等待律师确认':'' }}
                 {{ scope.row.orderStatus == 3 ? '等待用户确认':'' }}
                 {{ scope.row.orderStatus == 4 ? '已完成':'' }}
+                {{ scope.row.orderStatus == 5 ? '已结算':'' }}
               </template>
             </el-table-column>
             <el-table-column label="订单类型"  align="center">
@@ -193,6 +194,9 @@ export default {
         }, {
           value: 4,
           label: '已完成'
+        }, {
+          value: 5,
+          label: '已结算'
         }],
       orderStatus: null,
       orderTypeOptions: [{

@@ -130,6 +130,32 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/transaltioned',
+    component: Layout,
+    redirect: '/transaltioned',
+    children: [
+      {
+        path: 'transaltioned',
+        name: 'Transaltioned',
+        component: () => import('@/views/transaltioned/index'),
+        meta: { title: '翻译列表', icon: 'table' }
+      }
+    ]
+  },
+  {
+    path: '/transaltion',
+    component: Layout,
+    redirect: '/transaltion',
+    children: [
+      {
+        path: 'transaltion',
+        name: 'Transaltion',
+        component: () => import('@/views/transaltion/index'),
+        meta: { title: '审核翻译', icon: 'table' }
+      }
+    ]
+  },
+  {
     path: '/article',
     component: Layout,
     redirect: '/article',
