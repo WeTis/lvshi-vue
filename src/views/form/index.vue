@@ -116,6 +116,8 @@
     
     
     
+    
+    
     <el-dialog title="设置抽成方式" :visible.sync="dialogFormVisible">
 
       <el-form :model="form">

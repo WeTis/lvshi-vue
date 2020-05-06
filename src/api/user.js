@@ -151,3 +151,18 @@ export function setLanguage(params) {
   })
 }
 
+export function insertCoupon(data) {
+  return request({
+    url: 'user/insertCoupon',
+    method: 'POST',
+    data
+  })
+}
+
+export function getAllCouponList(params) {
+  return request({
+    url: 'user/getAllCouponList',
+    method: 'POST',
+    params
+  })
+}

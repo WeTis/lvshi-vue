@@ -168,6 +168,19 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/coupon',
+    component: Layout,
+    redirect: '/coupon',
+    children: [
+      {
+        path: 'coupon',
+        name: 'coupon',
+        component: () => import('@/views/coupon/index'),
+        meta: { title: '优惠券管理', icon: 'table' }
+      }
+    ]
+  },
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
