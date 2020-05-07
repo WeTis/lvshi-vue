@@ -43,7 +43,7 @@ export default {
     },
     isNest: {
       type: Boolean,
-      default: false
+      default: true
     },
     basePath: {
       type: String,

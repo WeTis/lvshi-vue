@@ -37,12 +37,12 @@
           </el-table-column>
           <el-table-column label="开始时间" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.startTime }}</span>
+              <span>{{ formatDate(scope.row.startTime) }}</span>
             </template>
           </el-table-column>
           <el-table-column label="结束时间" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.endTime }}</span>
+              <span>{{ formatDate(scope.row.endTime) }}</span>
             </template>
           </el-table-column>
           <el-table-column label="有效天数" align="center">
@@ -52,7 +52,7 @@
           </el-table-column>
           <el-table-column label="类型" align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.cardType }}</span>
+              <span>{{ scope.row.cardType == 1 ? '邀请优惠券' : '' }}</span>
             </template>
           </el-table-column>
           <el-table-column label="状态" align="center">
@@ -62,10 +62,8 @@
           </el-table-column>
           <el-table-column align="center" prop="created_at" min-width="150" label="操作">
             <template slot-scope="scope">
-              <el-button type="text" size="small">设置</el-button>
-              <!-- <el-button type="text" size="small" @click="changeFn(scope.row)">修改</el-button>
-              <el-button type="text" size="small" @click="delectFn(scope.row)">降级为用户</el-button> -->
-              <!-- <el-button type="text" size="small" v-on:click="updateFn(scope.row)">修改密码</el-button> -->
+              <el-button type="text" size="small" @click="deleFn(scope.row.id)">删除</el-button>
+              <el-button type="text" size="small" @click="changeFn(scope.row)">修改</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -83,13 +81,14 @@
       </el-footer>
     </el-container>
 
-    <addCoupon ref="addCoupon"/>
+    <addCoupon ref="addCoupon" @close="getData" />
   </div>
 </template>
 
 <script>
-import { getAllCouponList } from '@/api/user'
+import { getAllCouponList, insertCoupon } from '@/api/user'
 import addCoupon from './commpon/addCoupon'
+import qs from 'qs'
 export default {
   name: 'Dashboard',
   components: {
@@ -129,6 +128,49 @@ export default {
     },
     addCoupon() {
       this.$refs.addCoupon.showFn()
+    },
+    changeFn(data) {
+      this.$refs.addCoupon.showFn(data)
+    },
+    /**
+     * 删除
+     */
+    deleFn(id) {
+      const params = {
+        id: id,
+        type: 3
+      }
+      this.$confirm('此操作将永久删除该优惠券, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        insertCoupon(qs.stringify(params))
+          .then(res => {
+            if (res.status == 9999) {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              })
+              this.getData()
+            }
+          })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    formatDate(dates) {
+      const date = new Date(dates)
+      var YY = date.getFullYear() + '-'
+      var MM = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
+      var DD = (date.getDate() < 10 ? '0' + (date.getDate()) : date.getDate())
+      // var hh = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':'
+      // var mm = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':'
+      // var ss = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds())
+      return YY + MM + DD
     }
   }
 

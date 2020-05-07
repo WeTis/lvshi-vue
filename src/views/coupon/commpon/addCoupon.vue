@@ -77,7 +77,7 @@ export default {
       startTime: null,
       endTime: null,
       cardTitle: '',
-      cardType: '',
+      cardType: 1,
       limitDay: 1,
       type: 1,
       options: [
@@ -86,25 +86,43 @@ export default {
           label: '邀请代金券'
         }
       ],
-      showBox: false
+      showBox: false,
+      id: null
     }
   },
   created() {
 
   },
   methods: {
-    showFn() {
+    showFn(data) {
       this.showBox = true
+      if (data) {
+        this.cardMoney = data.cardMoney
+        this.startTime = data.startTime
+        this.endTime = data.endTime
+        this.cardTitle = data.cardTitle
+        this.limitDay = data.limitDay
+        this.type = 2
+        this.cardType = data.cardType
+        this.id = data.id
+      }
     },
     hideFn() {
       this.showBox = false
+      this.cardMoney = ''
+      this.startTime = null
+      this.endTime = null
+      this.cardTitle = ''
+      this.limitDay = 1
+      this.type = 1
+      this.cardType = 1
+      this.id = null
     },
     handleChange() {},
     insertCoupon() {
       if (!this.checkValue()) {
         return false
       }
-      console.log(this.startTime, this.limitDay)
       const params = {
         cardMoney: this.cardMoney * 1,
         startTime: this.startTime,
@@ -114,9 +132,20 @@ export default {
         limitDay: this.limitDay,
         type: this.type
       }
+      if (this.id) {
+        params.id = this.id
+      }
       insertCoupon(qs.stringify(params))
         .then(res => {
           console.log(res)
+          if (res.status == 9999) {
+            this.$message({
+              message: '操作成功',
+              type: 'success'
+            })
+            this.$emit('close')
+            this.hideFn()
+          }
         })
     },
     checkValue() {

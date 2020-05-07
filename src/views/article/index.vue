@@ -143,7 +143,8 @@ export default {
     getAdminList(){
       let data = {
         pageNumber: this.pageNumber,
-        pageSize: this.pageSize
+        pageSize: this.pageSize,
+         bannerType: 1
       }
 
       getArticle(data)
@@ -211,7 +212,8 @@ export default {
             content: this.ruleForm.content,
             imageUrl: imageUrl,
             addressUrl: this.ruleForm.addressUrl,
-            createUser: this.ruleForm.createUser
+            createUser: this.ruleForm.createUser,
+            bannerType: 1
         };
         // this.$confirm('确认修改该文章？',"提示",{
         //     type: 'warning'
@@ -250,7 +252,8 @@ export default {
                     content: this.ruleForm.content,
                     imageUrl: 'https://'+response.url,
                     addressUrl: this.ruleForm.addressUrl,
-                    createUser: this.ruleForm.createUser
+                    createUser: this.ruleForm.createUser,
+                    bannerType: 1
                 }
                 addArticle(params)
                 .then(res => {

@@ -51,7 +51,7 @@ export const constantRoutes = [
       path: 'data',
       name: 'data',
       component: () => import('@/views/data/index'),
-      meta: { title: '首页', icon: 'dashboard' }
+      meta: { title: '首页'}
     }]
   },
 
@@ -63,7 +63,7 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: '管理员列表', icon: 'dashboard' }
+      meta: { title: '管理员列表' }
     }]
   },
 
@@ -76,7 +76,7 @@ export const constantRoutes = [
         path: 'table',
         name: 'Table',
         component: () => import('@/views/table/index'),
-        meta: { title: '订单列表', icon: 'table' }
+        meta: { title: '订单列表'}
       }
     ]
   },
@@ -88,7 +88,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'Form',
         component: () => import('@/views/user/index'),
-        meta: { title: '用户列表', icon: 'form' }
+        meta: { title: '用户列表' }
       }
     ]
   },
@@ -100,7 +100,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'lange',
         component: () => import('@/views/lange/index'),
-        meta: { title: '语言管理', icon: 'form' }
+        meta: { title: '语言管理' }
       }
     ]
   },
@@ -112,7 +112,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'Form',
         component: () => import('@/views/form/index'),
-        meta: { title: '律师列表', icon: 'form' }
+        meta: { title: '律师列表' }
       }
     ]
   },
@@ -125,7 +125,7 @@ export const constantRoutes = [
         path: 'tree',
         name: 'Tree',
         component: () => import('@/views/tree/index'),
-        meta: { title: '审核律师', icon: 'table' }
+        meta: { title: '审核律师' }
       }
     ]
   },
@@ -138,7 +138,7 @@ export const constantRoutes = [
         path: 'transaltioned',
         name: 'Transaltioned',
         component: () => import('@/views/transaltioned/index'),
-        meta: { title: '翻译列表', icon: 'table' }
+        meta: { title: '翻译列表' }
       }
     ]
   },
@@ -151,7 +151,20 @@ export const constantRoutes = [
         path: 'transaltion',
         name: 'Transaltion',
         component: () => import('@/views/transaltion/index'),
-        meta: { title: '审核翻译', icon: 'table' }
+        meta: { title: '审核翻译' }
+      }
+    ]
+  },
+  {
+    path: '/banner',
+    component: Layout,
+    redirect: '/banner',
+    children: [
+      {
+        path: 'banner',
+        name: 'banner',
+        component: () => import('@/views/banner/index'),
+        meta: { title: '广告管理' }
       }
     ]
   },
@@ -164,7 +177,7 @@ export const constantRoutes = [
         path: 'article',
         name: 'article',
         component: () => import('@/views/article/index'),
-        meta: { title: '文章列表', icon: 'table' }
+        meta: { title: '文章列表' }
       }
     ]
   },
@@ -177,7 +190,7 @@ export const constantRoutes = [
         path: 'coupon',
         name: 'coupon',
         component: () => import('@/views/coupon/index'),
-        meta: { title: '优惠券管理', icon: 'table' }
+        meta: { title: '优惠券管理' }
       }
     ]
   },
