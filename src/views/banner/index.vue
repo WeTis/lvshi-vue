@@ -74,7 +74,7 @@
         <el-form-item label="主图片：" prop="imageUrl">
           <el-upload
             ref="upload"
-            action="api/user/uploadOss"
+            action="/lawyer/user/uploadOss"
             class="avatar-uploader"
             :show-file-list="false"
             :auto-upload="false"

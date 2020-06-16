@@ -68,7 +68,7 @@
           </el-table-column>
           <el-table-column label="关键字"  align="center">
             <template slot-scope="scope">
-              <span>{{ scope.row.userLabel }}</span>
+              <span>{{ (scope.row.userLabel) }}</span>
             </template>
           </el-table-column>
           <el-table-column label="执业经历"  align="center">
@@ -168,7 +168,7 @@
           <el-input v-model="infoFrom.photoPrice"></el-input>
         </el-form-item>
         <el-form-item label="主要类目">
-          <el-select v-model="infoFrom.type" placeholder="请选择主要类目">
+          <el-select v-model="infoFrom.type" multiple-limit="2" multiple placeholder="请选择主要类目">
             <el-option label="婚姻家事" value="婚姻家事"></el-option>
             <el-option label="劳动工伤" value="劳动工伤"></el-option>
             <el-option label="交通事故" value="交通事故"></el-option>
@@ -422,7 +422,7 @@ export default {
           selfData: info.selfData ? (info.selfData).split("ZH^")[0] : '',
           goodAt: info.goodAt ? (info.goodAt).split("ZH^")[0] : '',
           workExperience: info.workExperience ? (info.workExperience).split("ZH^")[0] : '',
-          type: info.userLabel,
+          type: (info.userLabel) ? (info.userLabel).split(',') : [],
           id: info.id
       }
       // 判断当前用户都有哪些语言
@@ -567,7 +567,7 @@ export default {
          selfData: this.infoFrom.selfData+"ZH^",
          goodAt: this.infoFrom.goodAt+"ZH^",
          workExperience: this.infoFrom.workExperience+"ZH^",
-         userLabel: this.infoFrom.type,
+         userLabel: (this.infoFrom.type).join(','),
          userAddress: this.infoFrom.userAddressLS + '$T$'+ this.infoFrom.userAddressNUM+"ZH^",
          languageId:  languageId.join(',')
         //  languageId: '1'
