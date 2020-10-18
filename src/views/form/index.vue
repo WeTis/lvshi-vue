@@ -179,6 +179,8 @@
             <el-option label="税务规划" value="税务规划"></el-option>
             <el-option label="公司业务" value="公司业务"></el-option>
             <el-option label="刑事辩护" value="刑事辩护"></el-option>
+            <el-option label="不良资产" value="不良资产"></el-option> 
+            <el-option label="数据安全" value="数据安全"></el-option>
           </el-select>
         </el-form-item>
         
